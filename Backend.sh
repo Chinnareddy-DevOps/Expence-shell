@@ -1,14 +1,14 @@
+
 #!/bin/bash
 
 USERID=$(id -u)
 TIMESTAMP=$(date +%F-%H-%M-%S)
-SCRIPTNAME=$0
-LOGFILE=/tmp/$SCRIPTNAME-$TIMESTAMP.log
+SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
+LOGFILE=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
-
 echo "Please enter DB password:"
 read -s mysql_root_password
 
@@ -63,24 +63,7 @@ npm install &>>$LOGFILE
 VALIDATE $? "Installing nodejs dependencies"
 
 #check your repo and path
-vi /etc/systemd/system/backend.service &>>$LOGFILE
-Description = Backend Service
-
-[Service]
-User=expense
-Environment=DB_HOST="172.31.31.34"
-ExecStart=/bin/node /app/index.js
-SyslogIdentifier=backend
-
-[Install]
-WantedBy=multi-user.target
-
-
-
-
-
-
-
+cp /home/ec2-user/expense-shell/backend.service /etc/systemd/system/backend.service &>>$LOGFILE
 VALIDATE $? "Copied backend service"
 
 systemctl daemon-reload &>>$LOGFILE
@@ -95,7 +78,7 @@ VALIDATE $? "Enabling backend"
 dnf install mysql -y &>>$LOGFILE
 VALIDATE $? "Installing MySQL Client"
 
-mysql -h   -uroot -p${mysql_root_password} < /app/schema/backend.sql &>>$LOGFILE
+mysql -h db.daws78s.online -uroot -p${mysql_root_password} < /app/schema/backend.sql &>>$LOGFILE
 VALIDATE $? "Schema loading"
 
 systemctl restart backend &>>$LOGFILE
