@@ -63,7 +63,7 @@ npm install &>>$LOGFILE
 VALIDATE $? "Installing nodejs dependencies"
 
 #check your repo and path
-cp backend.service /etc/systemd/system/backend.service &>>$LOGFILE
+sudo cp backend.service /etc/systemd/system/backend.service &>>$LOGFILE
 VALIDATE $? "Copied backend service"
 
 systemctl daemon-reload &>>$LOGFILE
